@@ -1,5 +1,5 @@
 // (c) Alexander Scherbatey 2018 
-// scherbatey@gmail.com
+// https://github.com/scherbatey/ptree_utils.git
 
 #pragma once
 
