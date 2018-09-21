@@ -11,6 +11,8 @@
 #include <set>
 #include <functional>
 
+namespace ptree_utils {
+
 template<class PTree>
 struct match_by_child_value 
 {
@@ -126,3 +128,5 @@ bool merge(PTree & pt, const PTree & pt_update, const M & match_nodes, const typ
 	
 	return true;
 }
+
+} // namespace ptree_utils
