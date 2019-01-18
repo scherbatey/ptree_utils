@@ -89,9 +89,22 @@ private:
 };
 
 
-template<class PTree, class M>
-bool merge(PTree & pt, const PTree & pt_update, const M & match_nodes, const typename PTree::key_type & start_path = typename PTree::key_type())
+template <
+	class PTree, 
+	class Matcher, 
+	class Filter
+>
+bool merge(
+	PTree & pt, 
+	const PTree & pt_update, 
+	const Matcher & match_nodes, 
+	const Filter * filter = nullptr, 
+	const typename PTree::key_type & start_path = typename PTree::key_type()
+)
 {
+	if (filter && !(*filter)(const_cast<const PTree *>(&pt), pt_update, start_path))
+		return true;
+
 	std::set<const PTree::value_type *> updated_nodes;
 
 	BOOST_FOREACH (const PTree::value_type & node_update, pt_update) {
@@ -118,10 +131,12 @@ bool merge(PTree & pt, const PTree & pt_update, const M & match_nodes, const typ
 		}
 		
 		if (matching_node_it != pt.end()) {
-			if (!merge(matching_node_it->second, node_update.second, match_nodes, path))
+			if (!merge(matching_node_it->second, node_update.second, match_nodes, filter, path))
 				return false;
-		} else
-			pt.insert(pt.end(), node_update);
+		}
+		else
+			if (!filter || (*filter)(nullptr, node_update.second, path))
+				pt.insert(pt.end(), node_update);
 	}
 
 	pt.data() = pt_update.data();
